@@ -1,0 +1,154 @@
+:root {
+  --ink: #1f2a2e;
+  --muted: #5f6f74;
+  --line: #d9dfe0;
+  --paper: #fbfaf6;
+  --accent: #c2410c;
+  font-family: "Inter", "Noto Sans JP", system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+a {
+  color: inherit;
+  text-underline-offset: 4px;
+}
+.shell {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px 48px;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 28px 0 16px;
+  border-bottom: 1px solid var(--line);
+}
+.brand {
+  font-weight: 700;
+  font-size: 20px;
+  text-decoration: none;
+}
+.brand span {
+  color: var(--muted);
+  font-weight: 400;
+}
+nav {
+  display: flex;
+  gap: 20px;
+  padding: 14px 0;
+  font-size: 14px;
+}
+main {
+  padding: 24px 0;
+}
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin: 0 0 8px;
+}
+h1 {
+  font-size: 40px;
+  line-height: 1.15;
+  margin: 0 0 16px;
+}
+.lead {
+  font-size: 18px;
+  color: var(--muted);
+  margin: 0 0 32px;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.cards article {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+  background: #fff;
+}
+.cards span {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+.cards h2 {
+  font-size: 18px;
+  margin: 8px 0;
+}
+.cards p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+.notes {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+}
+.notes li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.notes span {
+  color: var(--muted);
+  font-size: 13px;
+}
+form label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.input-row {
+  display: flex;
+  gap: 8px;
+}
+input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: inherit;
+}
+button {
+  padding: 10px 16px;
+  border: 1px solid var(--ink);
+  border-radius: 6px;
+  background: var(--ink);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+[role="status"] {
+  min-height: 1.4em;
+  color: var(--accent);
+  font-size: 14px;
+}
+.muted {
+  color: var(--muted);
+  font-size: 14px;
+}
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--muted);
+}

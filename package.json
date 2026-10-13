@@ -1,0 +1,20 @@
+{
+  "name": "flaredrive-workspace",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "postinstall": "npm run build --workspace flaredrive",
+    "build": "npm run build --workspace flaredrive && npm run build --workspace examples/basic",
+    "dev": "npm run dev --workspace examples/basic",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:e2e": "npm run test:e2e --workspace examples/basic"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

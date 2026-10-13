@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "declaration": true,
+    "sourceMap": true,
+    "types": ["node", "vite/client", "@vitejs/plugin-rsc/types", "@types/dom-navigation"]
+  },
+  "include": ["src"]
+}
