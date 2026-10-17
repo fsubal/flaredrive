@@ -4,6 +4,7 @@ import {
   startTransition,
   useLayoutEffect,
   useState,
+  useImperativeHandle,
   type ReactNode,
 } from "react";
 import { hydrateRoot } from "react-dom/client";
@@ -72,23 +73,25 @@ async function main() {
   let revision = 0;
   let inflight: AbortController | undefined;
   let leavingNatively = false;
-  let commit: (snapshot: Snapshot) => void = () => {};
+
   const committed = new Map<number, () => void>();
 
   const { promise: hydrated, resolve: markHydrated } =
     Promise.withResolvers<void>();
 
-  function Root() {
-    const [snapshot, setSnapshot] = useState<Snapshot>({
+  function Root({ ref }: { ref: React.Ref<(snapshot: Snapshot) => void> }) {
+    const [snapshot, commit] = useState<Snapshot>({
       payload: initial,
       revision: 0,
     });
-    commit = setSnapshot;
+
+    useImperativeHandle(ref, () => commit, []);
 
     useLayoutEffect(() => {
       markHydrated();
       committed.get(snapshot.revision)?.();
     }, [snapshot]);
+
     return (
       <Boundary revision={snapshot.revision}>{snapshot.payload.root}</Boundary>
     );
@@ -166,7 +169,8 @@ async function main() {
 
         committed.set(current, finish);
         signal.addEventListener("abort", finish, { once: true });
-        startTransition(() => commit({ payload, revision: current }));
+
+        startTransition(() => commit.current?.({ payload, revision: current }));
       });
     } catch (error) {
       if (superseded()) {
@@ -174,14 +178,20 @@ async function main() {
       }
 
       console.error("[flaredrive] navigation failed", error);
-      commit({ payload: { href, root: <Failure /> }, revision: current });
+      commit.current?.({
+        payload: { href, root: <Failure /> },
+        revision: current,
+      });
       if (!external) {
         throw error;
       }
     }
   }
 
-  hydrateRoot(document, <Root />);
+  const commit: { current: ((snapshot: Snapshot) => void) | null } = {
+    current: null,
+  };
+  hydrateRoot(document, <Root ref={commit} />);
   await hydrated;
 
   installRefresh(() => load(window.location.href));
