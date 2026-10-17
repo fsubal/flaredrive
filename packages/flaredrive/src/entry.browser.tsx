@@ -75,10 +75,8 @@ async function main() {
   let commit: (snapshot: Snapshot) => void = () => {};
   const committed = new Map<number, () => void>();
 
-  let markHydrated!: () => void;
-  const hydrated = new Promise<void>((resolve) => {
-    markHydrated = resolve;
-  });
+  const { promise: hydrated, resolve: markHydrated } =
+    Promise.withResolvers<void>();
 
   function Root() {
     const [snapshot, setSnapshot] = useState<Snapshot>({
@@ -86,6 +84,7 @@ async function main() {
       revision: 0,
     });
     commit = setSnapshot;
+
     useLayoutEffect(() => {
       markHydrated();
       committed.get(snapshot.revision)?.();
@@ -129,22 +128,32 @@ async function main() {
         headers: { Accept: FLIGHT_TYPE },
         signal,
       });
-      if (superseded()) return;
+      if (superseded()) {
+        return;
+      }
 
       if (response.redirected) {
         leave(response.url);
         return;
       }
+
       if (!response.headers.get("content-type")?.startsWith(FLIGHT_TYPE)) {
         leave(href);
         return;
       }
-      if (!response.body) throw new Error("Empty Flight response");
+
+      if (!response.body) {
+        throw new Error("Empty Flight response");
+      }
 
       const payload = await createFromReadableStream<FlightPayload>(
         response.body,
       );
-      if (superseded()) return;
+
+      if (superseded()) {
+        return;
+      }
+
       // Use the browser URL, not the (possibly synthetic) server-side one.
       payload.href = href;
 
@@ -154,15 +163,21 @@ async function main() {
           signal.removeEventListener("abort", finish);
           resolve();
         };
+
         committed.set(current, finish);
         signal.addEventListener("abort", finish, { once: true });
         startTransition(() => commit({ payload, revision: current }));
       });
     } catch (error) {
-      if (superseded()) return;
+      if (superseded()) {
+        return;
+      }
+
       console.error("[flaredrive] navigation failed", error);
       commit({ payload: { href, root: <Failure /> }, revision: current });
-      if (!external) throw error;
+      if (!external) {
+        throw error;
+      }
     }
   }
 
@@ -176,7 +191,10 @@ async function main() {
       leavingNatively = false;
       return;
     }
-    if (!shouldIntercept(event, window.location.href)) return;
+
+    if (!shouldIntercept(event, window.location.href)) {
+      return;
+    }
 
     event.intercept({
       handler: () => load(event.destination.url, event.signal),
